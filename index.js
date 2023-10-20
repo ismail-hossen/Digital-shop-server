@@ -19,23 +19,40 @@ const client = new MongoClient(process.env.mongo_url, {
 async function run() {
   try {
     const db = await client.db("digitalShop");
-    const collection = await db.collection("product");
+    const productCollection = await db.collection("product");
+    const cartCollection = await db.collection("products_cart");
 
     app.get("/products-by-brand/:brand", async (req, res) => {
       const param = req.params.brand;
-      const result = await collection.find({ brandName: param }).toArray();
+      const result = await productCollection
+        .find({ brandName: param })
+        .toArray();
       res.send(result);
     });
 
     app.get("/product-by-id/:id", async (req, res) => {
       const param = req.params.id;
-      const result = await collection.findOne({ _id: new ObjectId(param) });
+      const result = await productCollection.findOne({
+        _id: new ObjectId(param),
+      });
       res.send(result);
     });
 
     app.post("/add-product", async (req, res) => {
       const body = req.body;
-      const result = await collection.insertOne(body);
+      const result = await productCollection.insertOne(body);
+      res.send(result);
+    });
+
+    app.get("/add-to-cart/:email", async (req, res) => {
+      const param = req.params.email;
+      const result = await cartCollection.find({ email: param }).toArray();
+      res.send(result);
+    });
+
+    app.post("/add-to-cart", async (req, res) => {
+      const body = req.body;
+      const result = await cartCollection.insertOne(body);
       res.send(result);
     });
 
