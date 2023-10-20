@@ -1,5 +1,5 @@
 const express = require("express");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
 const app = express();
 const cors = require("cors");
@@ -21,8 +21,15 @@ async function run() {
     const db = await client.db("digitalShop");
     const collection = await db.collection("product");
 
-    app.get("/add-product", async (req, res) => {
-      const result = await collection.find({}).toArray();
+    app.get("/products-by-brand/:brand", async (req, res) => {
+      const param = req.params.brand;
+      const result = await collection.find({ brandName: param }).toArray();
+      res.send(result);
+    });
+
+    app.get("/product-by-id/:id", async (req, res) => {
+      const param = req.params.id;
+      const result = await collection.findOne({ _id: new ObjectId(param) });
       res.send(result);
     });
 
