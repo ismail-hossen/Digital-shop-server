@@ -61,10 +61,6 @@ async function run() {
       const result = await cartCollection.deleteOne({ _id: new ObjectId(id) });
       res.send(result);
     });
-
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
   } finally {
     // await client.close();
   }
